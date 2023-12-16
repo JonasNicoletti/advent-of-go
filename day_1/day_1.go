@@ -1,11 +1,14 @@
-package day_1
+package main
 
 import (
 	"bufio"
+	"errors"
+	"fmt"
 	"log"
 	"os"
 	"regexp"
 	"strconv"
+	"strings"
 )
 
 func ReadInput(filename string) []string {
@@ -51,37 +54,28 @@ func FindFirstAndLastPart1(text string) int {
 	return 0
 }
 
-func MatchNumberOrString(text string) string {
+func MatchNumberOrString(text string) (int, string) {
 	r, _ := regexp.Compile("([0-9]|one|two|three|four|five|six|seven|eight|nine)")
-	return r.FindString(text)
+	indexes := r.FindStringIndex(text)
+	if len(indexes) > 0 {
+		return r.FindStringIndex(text)[0], r.FindString(text)
+	}
+	return 0, r.FindString(text)
 }
 
-func FindFirstAndLastPart2(text string) int {
+func isDigit(text string) (int, error) {
 	rIsNumber, _ := regexp.Compile("[0-9]")
-	stringToNumber := map[string]string{"one": "1", "two": "2", "three": "3", "four": "4", "five": "5", "six": "6", "seven": "7", "eight": "8", "nine": "9"}
+	stringToNumber := map[string]int{"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9}
 
-	matchFirst := ""
-	matchLast := ""
-	for i := range text {
-		if matchFirst == "" {
-			matchFirst = MatchNumberOrString(string(text[0:i]))
-		}
-		if matchLast == "" {
-			matchLast = MatchNumberOrString(string(text[len(text)-1-i:]))
-		}
-
-		if matchFirst != "" && matchLast != "" {
-			if !rIsNumber.MatchString(matchFirst) {
-				matchFirst = stringToNumber[matchFirst]
-			}
-			if !rIsNumber.MatchString(matchLast) {
-				matchLast = stringToNumber[matchLast]
-			}
-			res, _ := strconv.Atoi(matchFirst + matchLast)
-			return res
+	if rIsNumber.MatchString(text[0:1]) {
+		return strconv.Atoi(text[0:1])
+	}
+	for str, num := range stringToNumber {
+		if strings.HasPrefix(text, str) {
+			return num, nil
 		}
 	}
-	return 0
+	return -1, errors.New("no found")
 }
 
 func Part1(fileName string) int {
@@ -96,12 +90,31 @@ func Part1(fileName string) int {
 }
 
 func Part2(fileName string) int {
-	result := 0
+	total := 0
 
 	lines := ReadInput(fileName)
+	firstDigit := -1
+	secondDigit := -1
 	for _, line := range lines {
-		result += FindFirstAndLastPart2(line)
+		for i := 0; i < len(line); i++ {
+			firstDigit, _ = isDigit(line[i:])
+			if firstDigit > -1 {
+				break
+			}
+		}
+		for i := len(line) - 1; i > -1; i-- {
+			secondDigit, _ = isDigit(line[i:])
+			if secondDigit > -1 {
+				break
+			}
+		}
+		total += 10*firstDigit + secondDigit
 	}
 
-	return result
+	return total
+}
+
+func main() {
+	part2 := Part2("input_part2_test.txt")
+	fmt.Printf("part 2: %v", part2)
 }
