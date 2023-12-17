@@ -1,34 +1,13 @@
 package main
 
 import (
-	"bufio"
 	"errors"
 	"fmt"
-	"log"
-	"os"
 	"regexp"
 	"strconv"
 	"strings"
+	"utils"
 )
-
-func ReadInput(filename string) []string {
-	file, err := os.Open(filename)
-	if err != nil {
-		log.Fatalf("error opening file with %v", err)
-		return nil
-	}
-
-	fileScanner := bufio.NewScanner(file)
-
-	var fileLines []string
-
-	for fileScanner.Scan() {
-		fileLines = append(fileLines, fileScanner.Text())
-	}
-
-	file.Close()
-	return fileLines
-}
 
 func FindFirstAndLastPart1(text string) int {
 	r, _ := regexp.Compile("[0-9]")
@@ -81,7 +60,7 @@ func isDigit(text string) (int, error) {
 func Part1(fileName string) int {
 	result := 0
 
-	lines := ReadInput(fileName)
+	lines := utils.ReadInput(fileName)
 	for _, line := range lines {
 		result += FindFirstAndLastPart1(line)
 	}
@@ -92,7 +71,7 @@ func Part1(fileName string) int {
 func Part2(fileName string) int {
 	total := 0
 
-	lines := ReadInput(fileName)
+	lines := utils.ReadInput(fileName)
 	firstDigit := -1
 	secondDigit := -1
 	for _, line := range lines {
@@ -115,6 +94,6 @@ func Part2(fileName string) int {
 }
 
 func main() {
-	part2 := Part2("input_part2_test.txt")
+	part2 := Part2("./day_1/input_part2_test.txt")
 	fmt.Printf("part 2: %v", part2)
 }
