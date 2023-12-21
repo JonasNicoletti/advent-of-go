@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"log"
 	"os"
+	"regexp"
 )
 
 func ReadInput(filename string) []string {
@@ -37,4 +38,15 @@ func Max(x, y int) int {
 		return x
 	}
 	return y
+}
+
+func IsDigit(s string) bool {
+	rexIsNumber, _ := regexp.Compile("[0-9]")
+
+	return rexIsNumber.MatchString(s)
+}
+
+type Coordinate struct {
+	X int
+	Y int
 }

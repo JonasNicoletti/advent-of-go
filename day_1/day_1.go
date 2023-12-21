@@ -43,10 +43,9 @@ func MatchNumberOrString(text string) (int, string) {
 }
 
 func isDigit(text string) (int, error) {
-	rIsNumber, _ := regexp.Compile("[0-9]")
 	stringToNumber := map[string]int{"one": 1, "two": 2, "three": 3, "four": 4, "five": 5, "six": 6, "seven": 7, "eight": 8, "nine": 9}
 
-	if rIsNumber.MatchString(text[0:1]) {
+	if utils.IsDigit(text[0:1]) {
 		return strconv.Atoi(text[0:1])
 	}
 	for str, num := range stringToNumber {
